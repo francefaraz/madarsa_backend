@@ -1,5 +1,5 @@
 const cors=require("cors");
-const connection=require('./db')
+const connection=require('./configs/db.config')
 const  express = require('express');
 const app = express()
 const port = process.env.PORT || 5000
@@ -9,8 +9,9 @@ connection()
 app.get("/",(req,res) => {
     res.send("hello backend is running")
 })
+const students=require('./routes/student.routes')
 
 // app.get('/', (req, res) => res.send('Hello World!'))
 app.listen(port, () => console.log(` app listening on port ${port}!`))
-
+app.use('/api/students',students)
 module.exports = app;
