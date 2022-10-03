@@ -62,7 +62,7 @@ exports.sendNotificationToDevices = async (req, res, next) => {
 exports.getNotifications = async (req, res, next) => {
 
 
-  Notifications.find()
+  Notifications.find().sort({createdAt:-1, updatedAt:-1})
     .then(result => {
         res.send(result);
     }).catch(err => {
