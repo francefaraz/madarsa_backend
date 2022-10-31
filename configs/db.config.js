@@ -3,6 +3,8 @@ console.log("entered")
 module.exports = async () => {
     try{
         const Murl=process.env.MONGODB_URL
+        console.log(Murl)
+        console.log(typeof(Murl))
         await mongoose.connect(Murl,{
             useNewUrlParser: true,
             useUnifiedTopology: true,
@@ -14,7 +16,7 @@ module.exports = async () => {
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
     }
     catch(e){
-        console.log("connection error: " + e.message);
+        console.log("mongo db connection error: " + e.message);
 
     }
 }

@@ -5,6 +5,7 @@ const Schema=mongoose.Schema;
 const studentsSchema=Schema({
     first_name: { type: String, required:true },
     last_name: { type: String, required:true },
+    photoUrl: { type: String },
     date_of_birth: { type: String, required:true },
     aadhar_number: { type: String ,required:true},
     age: { type: Number ,required:true},
@@ -12,7 +13,8 @@ const studentsSchema=Schema({
     email: { type: String ,required:true},
     father_name: { type: String ,required:true},
     mother_name: { type: String ,required:true},
-    address: { type: String ,required:true},
+    temp_address: { type: String ,required:true},
+    address:{type:String,required:true},
     phone_number: { type: String ,required:true},
     alternate_number: { type: String ,required:true}
     // photoUrl: { type: String ,required:true},

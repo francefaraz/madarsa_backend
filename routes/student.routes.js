@@ -16,19 +16,7 @@ router.post('/add',
             .withMessage("Please enter the student's age")
             .isInt()
             .withMessage("Age must be an integer"),
-        body('gender')
-            .trim()
-            .notEmpty()
-            .withMessage("Please enter the student gender")
-            .isLength({ min: 4, max: 6 })
-            .withMessage('please enter in format of male or female')
-            .custom((value, { req }) => {
-                if (value !== "male" && value !== "female")                 {
-                console.log(req.body);
-                  throw new Error("please enter in a valid format of male or female");
-                }
-                return true;
-              }),
+       
 ],
     studentController.createStudent
 );
