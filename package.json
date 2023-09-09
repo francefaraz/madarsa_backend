@@ -20,11 +20,12 @@
   },
   "homepage": "https://github.com/francefaraz/madarsa_backend#readme",
   "dependencies": {
+    "body-parser": "^1.20.1",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "express-validator": "^6.14.2",
     "mongoose": "^6.6.1",
+    "multer": "^1.4.5-lts.1",
     "request": "^2.88.2"
-
   }
 }

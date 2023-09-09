@@ -2,22 +2,28 @@ const { request } = require('express');
 const Students= require('../models/student.model');
 
 const sydFunctions=require('../util/syd-functions');
-exports.createStudent = async(req,res,next)=>{
-    console.log("hello")
+exports.createStudent = async(request,res,next)=>{
+    console.log("hello in syd")
+    console.log(request.body.first_name)
+
     try{
         
-        const errorMessage = sydFunctions.validators(req, res);
+        const errorMessage = sydFunctions.validators(request, res);
         console.log('Retrieved errorMessage', errorMessage);
         if (errorMessage) {
             return res.status(422).json({ message: 'Validation error', error: errorMessage });
         }
-        if (!req.file) {
+        if (!request.file) {
             return res.status(422).json({ message: 'Please add an image!' });
         }   
-        const studnet=new Students({
+        console.log(
+            "asdklfjjadsfkj"
+        )
+        console.log( request.file.path)
+        const student=new Students({
             first_name: request.body.first_name,
             last_name: request.body.last_name,
-            photoUrl: req.file.path.replace("\\", "/"), // If you are on Linux or Mac just use req.file.path
+            photoUrl: request.file.path.replace("\\", "/"), // If you are on Linux or Mac just use req.file.path
             date_of_birth: request.body.dob,
             aadhar_number:request.body.aadhar_number,
             age: request.body.age,
@@ -31,7 +37,7 @@ exports.createStudent = async(req,res,next)=>{
             alternate_number: request.body.alternate_number
 
         })
-        const result = await new Students(req.body).save()
+        const result = student.save()
 
         
         console.log('result', result);
