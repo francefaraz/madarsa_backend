@@ -37,10 +37,10 @@ exports.createStudent = async(request,res,next)=>{
             alternate_number: request.body.alternate_number
 
         })
-        const result = student.save()
+        const result = await student.save()
 
         
-        console.log('result', result);
+        console.log('result', await result);
         return res.status(201).json({
             message: "student is successfully added!",
             student: result
