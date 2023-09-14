@@ -20,10 +20,12 @@ exports.createStudent = async(request,res,next)=>{
             "asdklfjjadsfkj"
         )
         console.log( request.file.path)
+        const protocol = request.secure ? 'https' : 'http';
+        const hostUrl = `${protocol}://${request.headers.host}/`;
         const student=new Students({
             first_name: request.body.first_name,
             last_name: request.body.last_name,
-            photoUrl: request.file.path.replace("\\", "/"), // If you are on Linux or Mac just use req.file.path
+            photoUrl: hostUrl+request.file.path.replace("\\", "/"), // If you are on Linux or Mac just use req.file.path
             date_of_birth: request.body.dob,
             aadhar_number:request.body.aadhar_number,
             age: request.body.age,

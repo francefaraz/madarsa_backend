@@ -22,7 +22,10 @@ app.use((req, res, next) => {
     next();
 });
 app.get("/",(req,res) => {
-    console.log("hello")
+//     const protocol = req.secure ? 'https' : 'http';
+//   const hostUrl = `${protocol}://${req.headers.host}`;
+//   res.send(`Host URL: ${hostUrl}`);
+
     res.send("hello backend is running")
 })
 
