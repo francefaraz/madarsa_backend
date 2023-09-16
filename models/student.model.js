@@ -13,10 +13,15 @@ const studentsSchema=Schema({
     email: { type: String ,required:true},
     father_name: { type: String ,required:true},
     mother_name: { type: String ,required:true},
-    temp_address: { type: String ,required:true},
+    temp_address: { type: String},
     address:{type:String,required:true},
     phone_number: { type: String ,required:true},
-    alternate_number: { type: String ,required:true}
+    alternate_number: { type: String},
+    class: {
+        type: String,
+        enum: ['class_a', 'class_b', 'class_c', 'class_d'],
+        required: true,
+      },
     // photoUrl: { type: String ,required:true},
 },{timestamps:true})
 module.exports=mongoose.model('Students',studentsSchema,"students");

@@ -26,4 +26,6 @@ router.post('/add',uploadImage,
 
 router.get("/",studentController.getAllStudents)
 
+router.delete('/:email', studentController.deleteStudentByEmail);
+
 module.exports=router
