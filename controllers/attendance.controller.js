@@ -212,6 +212,7 @@ exports.getAttendanceForStudent = async (req, res) => {
             last_name: '$studentDetails.last_name',
             email: '$studentDetails.email',
             class:'$studentDetails.class',
+            father_name:'$studentDetails.father_name',
             // 'studentDetails.first_name': 1, // Include first_name in the result
             // 'studentDetails.last_name': 1, // Include last_name in the result
             // 'studentDetails.email': 1, // Include email in the result
