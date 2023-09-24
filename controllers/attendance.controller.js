@@ -70,27 +70,6 @@ exports.markAttendance = async (req, res) => {
   
 
 
-  // Get attendance list based on date
-  // exports.getAttendanceByDate = async (req, res, next) => {
-  //   try {
-  //     console.log("TEST")
-  //     const dateParam = req.params.date; // Get the date from the URL parameter
-  
-  //     // Convert the date parameter to a Date object
-  //     const date = new Date(dateParam);
-  
-  //     // Query the database to retrieve attendance records for the specified date
-  //     const attendanceList = await Attendance.find({ date });
-  
-  //     // Send the attendance list as a response
-  //     res.status(200).json({ attendanceList });
-  //   } catch (error) {
-  //     console.error('Error fetching attendance by date:', error);
-  //     res.status(500).json({ message: 'Internal server error' });
-  //   }
-  // };
-
-  
 
   exports.getAttendanceByDate = async (req, res, next) => {
     console.log("HELLO")
@@ -232,13 +211,14 @@ exports.getAttendanceForStudent = async (req, res) => {
             first_name: '$studentDetails.first_name',
             last_name: '$studentDetails.last_name',
             email: '$studentDetails.email',
+            class:'$studentDetails.class',
             // 'studentDetails.first_name': 1, // Include first_name in the result
             // 'studentDetails.last_name': 1, // Include last_name in the result
             // 'studentDetails.email': 1, // Include email in the result
           },
         },
       ]);
-  
+        console.log(attendanceList)
       // Send the attendance list with student details as a response
       res.status(200).json({ attendanceList });
     } catch (error) {
@@ -247,3 +227,36 @@ exports.getAttendanceForStudent = async (req, res) => {
     }
   };
   
+
+// Get attendance based on class and date (both are optional)
+exports.getAttendanceByClassAndDate = async (req, res, next) => {
+  try {
+    const { class: className, date } = req.query;
+
+    let query = {};
+
+    // Check if the 'class' parameter is provided
+    if (className) {
+      query['student.class'] = className;
+    }
+
+    // Check if the 'date' parameter is provided
+    if (date) {
+      query['date'] = new Date(date);
+    }
+
+    // Find the attendance records that match the query
+    const attendanceList = await Attendance.find(query)
+      .populate({
+        path: 'student',
+        select: 'first_name last_name email class', // Add other fields you want to select
+      })
+      .exec();
+
+    // Send the attendance list as a response
+    res.status(200).json({ attendanceList });
+  } catch (error) {
+    console.error('Error fetching attendance:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

@@ -58,4 +58,7 @@ router.get('/attendance/student/:studentId', attendanceController.getAttendanceF
 router.get('/attendance', attendanceController.getAttendance);
 
 
+// Get attendance list based on class and date (both are optional)
+// router.get('/attendance', attendanceController.getAttendanceByClassAndDate);
+
 module.exports=router
