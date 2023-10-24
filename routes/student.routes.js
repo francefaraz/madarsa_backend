@@ -4,6 +4,7 @@ const { body } = require('express-validator');
 const router = express.Router();
 const studentController=require('../controllers/student.controller');
 const attendanceController= require('../controllers/attendance.controller')
+const feeController= require('../controllers/fee.controller')
 // router.post('/add',)
 const { check, validationResult } = require("express-validator");
 const uploadImage = require('../middleware/upload-image');
@@ -60,5 +61,12 @@ router.get('/attendance', attendanceController.getAttendance);
 
 // Get attendance list based on class and date (both are optional)
 // router.get('/attendance', attendanceController.getAttendanceByClassAndDate);
+
+// getting fee list for the given month and year
+router.get('/fee-status',feeController.getStudentsFeeListBasedOnYearAndMonth);
+
+//inserting fee
+router.post('/insert-fee',feeController.createFee)
+
 
 module.exports=router
