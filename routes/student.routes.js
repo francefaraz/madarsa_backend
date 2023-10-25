@@ -1,6 +1,7 @@
 const express= require('express');
 const { body } = require('express-validator');
 
+const multer= require('multer');
 const router = express.Router();
 const studentController=require('../controllers/student.controller');
 const attendanceController= require('../controllers/attendance.controller')
@@ -8,6 +9,12 @@ const feeController= require('../controllers/fee.controller')
 // router.post('/add',)
 const { check, validationResult } = require("express-validator");
 const uploadImage = require('../middleware/upload-image');
+
+
+const fs = require('fs')
+const csvParser = require("csv-parser");
+const path = require('path')
+
 
 console.log("entered in student routes")
 router.post('/add',uploadImage, 
@@ -69,4 +76,38 @@ router.get('/fee-status',feeController.getStudentsFeeListBasedOnYearAndMonth);
 router.post('/insert-fee',feeController.createFee)
 
 
+
+
+var storage = multer.diskStorage({
+    destination: (req, file, callBack) => {
+      callBack(null, './uploads/')
+    },
+    filename: (req, file, callBack) => {
+      callBack(
+        null,
+        file.fieldname + '-' + Date.now() + path.extname(file.originalname),
+      )
+    },
+  })
+  var upload = multer({
+    storage: storage,
+  })
+
+router.post('/uploadcsv',upload.single('uploadcsv'),studentController.uploadStudentData)
+
+  async function csvToDb(csvUrl) {
+    const result = [];
+    console.log("csv url is ",csvUrl)
+    fs.createReadStream(csvUrl)
+  .pipe(csvParser())
+  .on("data", (data) => {
+    console.log(data)
+    result.push(data);
+  })
+  .on("end", () => {
+    console.log(result);
+    // fs.unlinkSync(csvUrl)
+
+  });
+}
 module.exports=router
