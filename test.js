@@ -98,6 +98,25 @@ const getStudentsWithPaymentStatus = async (month, year) => {
           first_name: 1,
           last_name: 1,
           email: 1,
+          fees:1,
+          paymentDate: {
+            $ifNull: [
+              {
+                $cond: {
+                  if: {
+                    $and: [
+                      { $gt: [{ $size: '$fees' }, 0] },
+                      { $eq: [{ $arrayElemAt: ['$fees.month', 0] }, month] },
+                      { $eq: [{ $arrayElemAt: ['$fees.year', 0] }, year] },
+                    ],
+                  },
+                  then: { $arrayElemAt: ['$fees.paymentDate', 0] },
+                  else: null,
+                },
+              },
+              null,
+            ],
+          },
           paymentStatus: {
             $cond: {
               if: {
@@ -123,6 +142,24 @@ const getStudentsWithPaymentStatus = async (month, year) => {
               else: 'Not Paid',
             },
           },
+          paymentType: {
+            $ifNull: [
+              {
+                $cond: {
+                  if: {
+                    $and: [
+                      { $gt: [{ $size: '$fees' }, 0] },
+                      { $eq: [{ $arrayElemAt: ['$fees.month', 0] }, month] },
+                      { $eq: [{ $arrayElemAt: ['$fees.year', 0] }, year] },
+                    ],
+                  },
+                  then: { $arrayElemAt: ['$fees.paymentType', 0] },
+                  else: null,
+                },
+              },
+              null,
+            ],
+          },
         },
       },
     ]);
@@ -135,7 +172,7 @@ const getStudentsWithPaymentStatus = async (month, year) => {
 };
 
 // Example usage:
-const month = 'November'; // Specify the month
+const month = 10; // Specify the month
 const year = 2023; // Specify the year
 
 getStudentsWithPaymentStatus(month, year)
