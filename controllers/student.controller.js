@@ -1,4 +1,9 @@
 const { request } = require('express');
+const fs = require('fs')
+const csvParser = require("csv-parser");
+const path = require('path')
+
+
 const Students= require('../models/student.model');
 
 const sydFunctions=require('../util/syd-functions');
@@ -90,3 +95,29 @@ exports.deleteStudentByEmail = async (req, res) => {
       res.status(500).json({ message: 'Failed to delete student' });
     }
   };
+
+
+  exports.uploadStudentData = async (req,res)=>{
+    console.log(req.file)
+    csvToDb('./uploads/' + req.file.filename).then(console.log("done")).catch(err => console.log(err));
+    res.json({
+      msg: 'File successfully inserted!',
+      file: req.file,
+    })
+  }
+
+  async function csvToDb(csvUrl) {
+    const result = [];
+    console.log("csv url is ",csvUrl)
+    fs.createReadStream(csvUrl)
+  .pipe(csvParser())
+  .on("data", (data) => {
+    console.log(data)
+    result.push(data);
+  })
+  .on("end", () => {
+    console.log(result);
+    fs.unlinkSync(csvUrl)
+
+  });
+}
