@@ -10,6 +10,10 @@ const feeSchema = new mongoose.Schema({
     ref: 'Student', // Reference to the Student model
     required: true,
   },
+  amount:{
+    type: String,
+
+  },
   paymentType: {
     type: String,
     required: true,

@@ -101,17 +101,18 @@ exports.getStudentsFeeListBasedOnYearAndMonth = async (req, res) => {
 
 exports.createFee = async (req, res) => {
     try {
-      const { studentId, paymentType, paymentDate, year, month } = req.body;
+      const { studentId, paymentType, paymentDate,amount, year, month } = req.body;
   
       const fee = new Fee({
         student: studentId,
         paymentType,
         paymentDate,
+        amount,
         year,
         month,
       });
-  
-      await fee.save();
+      console.log("FEE IS ",fee)
+      // await fee.save();
   
       res.status(201).json({ message: 'Fee record saved successfully', fee });
     } catch (error) {
