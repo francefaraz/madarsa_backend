@@ -112,7 +112,7 @@ exports.createFee = async (req, res) => {
         month,
       });
       console.log("FEE IS ",fee)
-      // await fee.save();
+      await fee.save();
   
       res.status(201).json({ message: 'Fee record saved successfully', fee });
     } catch (error) {
