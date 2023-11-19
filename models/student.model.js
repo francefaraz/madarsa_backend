@@ -24,4 +24,7 @@ const studentsSchema=Schema({
       },
     // photoUrl: { type: String ,required:true},
 },{timestamps:true})
+
+studentsSchema.index({ first_name: 1, last_name: 1, father_name: 1,phone_number:1 }, { unique: true });
+
 module.exports=mongoose.model('Students',studentsSchema,"students");
