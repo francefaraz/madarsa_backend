@@ -98,26 +98,57 @@ exports.deleteStudentByEmail = async (req, res) => {
 
 
   exports.uploadStudentData = async (req,res)=>{
+    try {
     console.log(req.file)
-    csvToDb('./uploads/' + req.file.filename).then(console.log("done")).catch(err => console.log(err));
-    res.json({
-      msg: 'File successfully inserted!',
-      file: req.file,
-    })
+    const csvUrl ='./uploads/' + req.file.filename // Path to the uploaded CSV file
+     const result = await csvToDb(csvUrl);
+     console.log("h",result)
+    // csvToDb('./uploads/' + req.file.filename).then(console.log("done")).catch(err => console.log(err));
+    await Students.insertMany(result);
+
+    res.status(200).json({ message: 'CSV uploaded and students inserted successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
+}
+
 
   async function csvToDb(csvUrl) {
-    const result = [];
-    console.log("csv url is ",csvUrl)
-    fs.createReadStream(csvUrl)
-  .pipe(csvParser())
-  .on("data", (data) => {
-    console.log(data)
-    result.push(data);
-  })
-  .on("end", () => {
-    console.log(result);
-    fs.unlinkSync(csvUrl)
+    return new Promise((resolve, reject) => {
+      const result = [];
+      fs.createReadStream(csvUrl)
+        .pipe(csvParser())
+        .on('data', (data) => {
+          console.log(data);
+      if(data.first_name!='')
+            result.push(data);
+        })
+        .on('end', () => {
+          // Delete the CSV file after reading its content
+          fs.unlinkSync(csvUrl);
+          resolve(result);
+        })
+        .on('error', (error) => {
+          reject(error);
+        });
+    });
+  }
 
-  });
-}
+//   async function csvToDb(csvUrl) {
+//     const result = [];
+//     console.log("csv url is ",csvUrl)
+//     fs.createReadStream(csvUrl)
+//   .pipe(csvParser())
+//   .on("data", (data) => {
+//     console.log(data)
+//     if(data.first_name!='')
+//     result.push(data);
+//   })
+//   .on("end", () => {
+//     console.log(result);
+//     fs.unlinkSync(csvUrl)
+
+//   });
+// }
+//https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg

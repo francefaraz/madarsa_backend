@@ -95,19 +95,4 @@ var storage = multer.diskStorage({
 
 router.post('/uploadcsv',upload.single('uploadcsv'),studentController.uploadStudentData)
 
-  async function csvToDb(csvUrl) {
-    const result = [];
-    console.log("csv url is ",csvUrl)
-    fs.createReadStream(csvUrl)
-  .pipe(csvParser())
-  .on("data", (data) => {
-    console.log(data)
-    result.push(data);
-  })
-  .on("end", () => {
-    console.log(result);
-    // fs.unlinkSync(csvUrl)
-
-  });
-}
 module.exports=router
