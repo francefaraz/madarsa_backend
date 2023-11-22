@@ -95,4 +95,8 @@ var storage = multer.diskStorage({
 
 router.post('/uploadcsv',upload.single('uploadcsv'),studentController.uploadStudentData)
 
+router.get('/get_attendance/date', attendanceController.getStudentsAttendanceStatus);
+
+
+
 module.exports=router
