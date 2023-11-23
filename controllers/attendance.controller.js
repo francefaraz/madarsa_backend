@@ -263,63 +263,6 @@ exports.getAttendanceByClassAndDate = async (req, res, next) => {
 };
 
 
-// exports.getStudentsAttendanceStatus = async (req, res) => {
-//   try {
-//     const { attendanceDate } = req.query;
-
-//     const studentsWithAttendanceStatus = await Students.aggregate([
-//       {
-//         $lookup: {
-//           from: 'attendance', // Collection name for attendance
-//           localField: '_id',
-//           foreignField: 'student',
-//           as: 'attendance',
-//         },
-//       },
-//       {
-//         $project: {
-//           _id: 1,
-//           first_name: 1,
-//           last_name: 1,
-//           email: 1,
-//           class: 1,
-//           attendanceStatus: {
-//             $cond: {
-//               if: {
-//                 $gt: [
-//                   {
-//                     $size: {
-//                       $filter: {
-//                         input: '$attendance',
-//                         as: 'attend',
-//                         cond: {
-//                           $and: [
-//                             { $eq: ['$$attend.date', new Date(attendanceDate)] },
-//                             { $eq: ['$$attend.status', 'present'] }, // Adjust as needed
-//                           ],
-//                         },
-//                       },
-//                     },
-//                   },
-//                   0,
-//                 ],
-//               },
-//               then: 'Present',
-//               else: 'Absent',
-//             },
-//           },
-//         },
-//       },
-//     ]);
-
-//     console.log(studentsWithAttendanceStatus);
-//     res.status(200).json(studentsWithAttendanceStatus);
-//   } catch (error) {
-//     console.error('Error:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// };
-
 exports.getStudentsAttendanceStatus = async (req, res) => {
   try {
     const { attendanceDate } = req.query;
@@ -327,7 +270,7 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
     const studentsWithAttendanceStatus = await Students.aggregate([
       {
         $lookup: {
-          from: 'attendance',
+          from: 'attendances',
           localField: '_id',
           foreignField: 'student',
           as: 'attendance',
@@ -340,7 +283,10 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
           last_name: 1,
           email: 1,
           class: 1,
-          attendanceStatus: {
+          // attendance:1,
+          morning_status: {
+            $ifNull:[
+            {
             $cond: {
               if: {
                 $gt: [
@@ -358,6 +304,7 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
                               ],
                             },
                             { $eq: [{ $strcasecmp: ['$$attend.status', 'present'] }, 0] },
+                            {$eq:[{ $strcasecmp:['$$attend.classType','morning']},0]}
                           ],
                         },
                       },
@@ -366,9 +313,48 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
                   0,
                 ],
               },
-              then: 'Present',
-              else: 'Absent',
+              then:{ $arrayElemAt: ['$attend.status', 0] },
+              else: null,
+             },
             },
+            null,
+          ]
+          },
+          evening_status: {
+            $ifNull: [
+              {
+            $cond: {
+              if: {
+                $gt: [
+                  {
+                    $size: {
+                      $filter: {
+                        input: '$attendance',
+                        as: 'attend',
+                        cond: {
+                          $and: [
+                            {
+                              $eq: [
+                                { $dateToString: { format: '%Y-%m-%d', date: '$$attend.date' } },
+                                attendanceDate,
+                              ],
+                            },
+                            { $eq: [{ $strcasecmp: ['$$attend.status', 'present'] }, 0] },
+                            {$eq:[{ $strcasecmp:['$$attend.classType','evening']},0]}
+                          ],
+                        },
+                      },
+                    },
+                  },
+                  0,
+                ],
+              },
+              then:{ $arrayElemAt: ['$attend.status', 0] },
+              else: null,
+            },
+            },
+          null,
+          ],
           },
         },
       },
@@ -381,3 +367,78 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+
+
+
+
+
+
+/*
+
+ mattendanceStatus: {
+            $cond: {
+              if: {
+                $gt: [
+                  {
+                    $size: {
+                      $filter: {
+                        input: '$attendance',
+                        as: 'attend',
+                        cond: {
+                          $and: [
+                            {
+                              $eq: [
+                                { $dateToString: { format: '%Y-%m-%d', date: '$$attend.date' } },
+                                attendanceDate,
+                              ],
+                            },
+                            { $eq: [{ $strcasecmp: ['$$attend.status', 'present'] }, 0] },
+                            { $eq: ['$attendance.classType', 'morning'] },
+
+                          ],
+                        },
+                      },
+                    },
+                  },
+                  0,
+                ],
+              },
+              then: 'Present',
+              else: 'Absent',
+            },
+          },
+          eattendanceStatus: {
+            $cond: {
+              if: {
+                $gt: [
+                  {
+                    $size: {
+                      $filter: {
+                        input: '$attendance',
+                        as: 'attend',
+                        cond: {
+                          $and: [
+                            {
+                              $eq: [
+                                { $dateToString: { format: '%Y-%m-%d', date: '$$attend.date' } },
+                                attendanceDate,
+                              ],
+                            },
+                            { $eq: [{ $strcasecmp: ['$$attend.status', 'present'] }, 0] },
+                            { $eq: ['$attendance.classType', 'evening'] },
+
+                          ],
+                        },
+                      },
+                    },
+                  },
+                  0,
+                ],
+              },
+              then: 'Present',
+              else: 'Absent',
+            },
+          },
+
+*/
