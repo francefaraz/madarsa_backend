@@ -283,6 +283,8 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
           last_name: 1,
           email: 1,
           class: 1,
+          father_name:1,
+          photoUrl:1,
           // attendance:1,
           morning_status: {
             $ifNull:[
