@@ -40,9 +40,13 @@ exports.createStudent = async(request,res,next)=>{
             class:request.body.class,
             father_name: request.body.father_name,
             mother_name: request.body.mother_name,
+            roll_number: request.body.roll_number,
+            admission_number:request.body.admission_number,
+            entry_fee:request.body.entry_fee,
             temp_address: request.body.temp_address,
             address:request.body.address,
             phone_number: request.body.phone_number,
+
             alternate_number: request.body.alternate_number
 
         })
@@ -65,7 +69,7 @@ exports.createStudent = async(request,res,next)=>{
 
 
 exports.getAllStudents= async(req, res, next)=>{
-    Students.find()
+    Students.find().sort({class:1,roll_number:1})
     .then(result => {
         res.send(result);
     }).catch(err => {
