@@ -279,6 +279,7 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
       {
         $project: {
           _id: 1,
+          roll_number:1,
           first_name: 1,
           last_name: 1,
           email: 1,
