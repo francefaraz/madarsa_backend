@@ -159,7 +159,6 @@ exports.getAttendanceForStudent = async (req, res) => {
   // };
   
 
-  const mongoose = require('mongoose');
 
   exports.getAttendance = async (req, res, next) => {
     try {
@@ -213,6 +212,7 @@ exports.getAttendanceForStudent = async (req, res) => {
             email: '$studentDetails.email',
             class:'$studentDetails.class',
             father_name:'$studentDetails.father_name',
+            roll_number:'$studentDetails.roll_number',
             // 'studentDetails.first_name': 1, // Include first_name in the result
             // 'studentDetails.last_name': 1, // Include last_name in the result
             // 'studentDetails.email': 1, // Include email in the result
@@ -700,8 +700,11 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
           _id: 1,
           first_name: 1,
           last_name: 1,
+          father_name:1,
           email: 1,
+          photoUrl:1,
           class: 1,
+          roll_number:1,
           morning_status: {
             $ifNull: [
               {
@@ -763,10 +766,19 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
           _id: 1,
           first_name: 1,
           last_name: 1,
+          father_name:1,
+          photoUrl:1,
           email: 1,
+          roll_number:1,
           class: 1,
-          morning_status: '$morning_status.status',
-          evening_status: '$evening_status.status',
+          morning_status: { $ifNull: ['$morning_status.status', null] },
+          evening_status: { $ifNull: ['$evening_status.status', null] },
+        },
+      },
+      {
+        $sort: {
+          class: 1,
+          roll_number: 1,
         },
       },
     ]);
