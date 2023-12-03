@@ -25,6 +25,7 @@ exports.getStudentsFeeListBasedOnYearAndMonth = async (req, res) => {
             email: 1,
             class:1,
             fees:1,
+            roll_number:1,
             paymentDate: {
               $ifNull: [
                 {
@@ -88,7 +89,7 @@ exports.getStudentsFeeListBasedOnYearAndMonth = async (req, res) => {
             }
           },
         },
-      ]);
+      ]).sort({class:1,roll_number:1});
       console.log(studentsWithPaymentStatus);
       res.status(200).json(studentsWithPaymentStatus);
   } catch (error) {

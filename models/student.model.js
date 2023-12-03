@@ -13,7 +13,7 @@ const studentsSchema=Schema({
     gender: { type: String ,required:true},
     email: { type: String ,required:true},
     mother_name: { type: String ,required:true},
-    roll_number: {type:String,required:true},
+    roll_number: {type:String,required:true ,   unique: true},
     admission_number:{ type:String,required:true},
     entry_fee:{type:String,required:true},
     class: {
