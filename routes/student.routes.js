@@ -97,6 +97,6 @@ router.post('/uploadcsv',upload.single('uploadcsv'),studentController.uploadStud
 
 router.get('/get_attendance/date', attendanceController.getStudentsAttendanceStatus);
 
-
+router.get('/get_students_attendance_reports',attendanceController.getStudentsAttendanceReport);
 
 module.exports=router
