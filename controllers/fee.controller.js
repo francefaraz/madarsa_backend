@@ -24,6 +24,7 @@ exports.getStudentsFeeListBasedOnYearAndMonth = async (req, res) => {
             last_name: 1,
             email: 1,
             class:1,
+            class_alias:1,
             fees:1,
             roll_number:1,
             paymentDate: {

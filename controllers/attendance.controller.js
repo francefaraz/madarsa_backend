@@ -213,6 +213,7 @@ exports.getAttendanceForStudent = async (req, res) => {
             class:'$studentDetails.class',
             father_name:'$studentDetails.father_name',
             roll_number:'$studentDetails.roll_number',
+            class_alias:'$studentDetails.class_alias'
             // 'studentDetails.first_name': 1, // Include first_name in the result
             // 'studentDetails.last_name': 1, // Include last_name in the result
             // 'studentDetails.email': 1, // Include email in the result
@@ -287,6 +288,7 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
           photoUrl:1,
           class: 1,
           roll_number:1,
+          class_alias:1,
           morning_status: {
             $ifNull: [
               {
@@ -353,6 +355,7 @@ exports.getStudentsAttendanceStatus = async (req, res) => {
           email: 1,
           roll_number:1,
           class: 1,
+          class_alias:1,
           morning_status: { $ifNull: ['$morning_status.status', null] },
           evening_status: { $ifNull: ['$evening_status.status', null] },
         },
@@ -409,6 +412,7 @@ exports.getStudentsAttendanceReport = async (req, res) => {
           email: { $first: '$email' },
           // photoUrl: { $first: '$photoUrl' },
           class: { $first: '$class' },
+          class_alias:{$first: '$class_alias' },
           roll_number: { $first: '$roll_number' },
           morning_status: {
             $max: {
@@ -439,6 +443,7 @@ exports.getStudentsAttendanceReport = async (req, res) => {
           email: 1,
           // photoUrl: 1,
           class: 1,
+          class_alias:1,
           roll_number: 1,
           morning_status: 1,
           evening_status: 1,

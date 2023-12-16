@@ -21,19 +21,33 @@ const studentsSchema=Schema({
         enum: ['class_a', 'class_b', 'class_c', 'class_d'],
         required: true,
       },
+    class_alias:{type:String},
     phone_number: { type: String ,required:true},
     photoUrl: { type: String },
     temp_address: { type: String},
     alternate_number: { type: String},
 },{timestamps:true})
 
-studentsSchema.index({ first_name: 1, last_name: 1, father_name: 1, phone_number: 1 }, { unique: true }, function(err, result) {
-  if(err) {
-     console.log("asdf",err);
+studentsSchema.pre('save', function (next) {
+  const classAliasMapping = {
+      'class_a': 'beginner',
+      'class_b': 'Qaida',
+      'class_c': 'Amma Para',
+      'class_d': "Qur'an",
+  };
 
-  } else {
-    console.log("helloaf",result);
- } 
+  // Set class_alias based on the selected class
+  this.class_alias = classAliasMapping[this.class] || '';
+
+  next();
+});
+
+studentsSchema.index({ first_name: 1, last_name: 1, father_name: 1, phone_number: 1 }, { unique: true }, function(err, result) {
+  if (err) {
+    console.log("Error creating index:", err);
+} else {
+    console.log("Index created successfully:", result);
+}
 });
 
   
