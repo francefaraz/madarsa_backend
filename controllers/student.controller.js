@@ -28,16 +28,24 @@ exports.createStudent = async(request,res,next)=>{
         console.log( request.file.path)
         const protocol = request.secure ? 'https' : 'http';
         const hostUrl = `${protocol}://${request.headers.host}/`;
+        const classAliasMapping = {
+          'class_a': 'beginner',
+          'class_b': 'Qaida',
+          'class_c': 'Amma Para',
+          'class_d': "Qur'an",
+        };
         const student=new Students({
             first_name: request.body.first_name,
             last_name: request.body.last_name,
             photoUrl: hostUrl+request.file.path.replace("\\", "/"), // If you are on Linux or Mac just use req.file.path
             date_of_birth: request.body.dob,
+            date_of_joining: request.body.doj,
             aadhar_number:request.body.aadhar_number,
             age: request.body.age,
             gender: request.body.gender,
             email: request.body.email,
             class:request.body.class,
+            class_alias : classAliasMapping[request.body.class],
             father_name: request.body.father_name,
             mother_name: request.body.mother_name,
             roll_number: request.body.roll_number,
@@ -46,7 +54,8 @@ exports.createStudent = async(request,res,next)=>{
             temp_address: request.body.temp_address,
             address:request.body.address,
             phone_number: request.body.phone_number,
-
+            father_number:request.body.father_number,
+            mother_number:request.body.mother_number,
             alternate_number: request.body.alternate_number
 
         })
@@ -106,7 +115,16 @@ exports.deleteStudentByEmail = async (req, res) => {
     console.log(req.file)
     const csvUrl ='./uploads/' + req.file.filename // Path to the uploaded CSV file
      const result = await csvToDb(csvUrl);
-     console.log("h")
+     result.forEach((student) => {
+      const classAliasMapping = {
+        'class_a': 'beginner',
+        'class_b': 'Qaida',
+        'class_c': 'Amma Para',
+        'class_d': "Qur'an",
+      };
+
+      student.class_alias = classAliasMapping[student.class] || '';
+    });
     // csvToDb('./uploads/' + req.file.filename).then(console.log("done")).catch(err => console.log(err));
     await Students.insertMany(result);
 
