@@ -106,7 +106,7 @@ exports.deleteStudentByEmail = async (req, res) => {
     console.log(req.file)
     const csvUrl ='./uploads/' + req.file.filename // Path to the uploaded CSV file
      const result = await csvToDb(csvUrl);
-     console.log("h",result)
+     console.log("h")
     // csvToDb('./uploads/' + req.file.filename).then(console.log("done")).catch(err => console.log(err));
     await Students.insertMany(result);
 
@@ -124,7 +124,7 @@ exports.deleteStudentByEmail = async (req, res) => {
       fs.createReadStream(csvUrl)
         .pipe(csvParser())
         .on('data', (data) => {
-          console.log(data);
+          console.log("name ",data.first_name,"-",data.last_name," [fara");
       if(data.first_name!='')
             result.push(data);
         })

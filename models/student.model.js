@@ -7,6 +7,7 @@ const studentsSchema=Schema({
     last_name: { type: String, required:true },
     date_of_birth: { type: String, required:true },
     aadhar_number: { type: String ,required:true},
+    date_of_joining:{ type: String ,required:true},
     father_name: { type: String ,required:true},
     age: { type: Number ,required:true},
     address:{type:String,required:true},
@@ -14,6 +15,8 @@ const studentsSchema=Schema({
     email: { type: String ,required:true},
     mother_name: { type: String ,required:true},
     roll_number: {type:String,required:true ,   unique: true},
+    father_number:{ type: String },
+    mother_number:{ type: String },
     admission_number:{ type:String,required:true},
     entry_fee:{type:String,required:true},
     class: {
