@@ -157,6 +157,66 @@ exports.deleteStudentByEmail = async (req, res) => {
     });
   }
 
+// student update 
+
+exports.updateStudent = async (req, res, next) => {
+  const studentId = req.params.id;
+
+  try {
+    const student = await Students.findById(studentId);
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    // Update fields based on the request body
+    console.log("REQUEST BODY IS ",req.body)
+    student.first_name = req.body.first_name || student.first_name;
+    student.last_name = req.body.last_name || student.last_name;
+    student.date_of_birth = req.body.date_of_birth || student.date_of_birth;
+    student.aadhar_number = req.body.aadhar_number || student.aadhar_number;
+    student.date_of_joining = req.body.date_of_joining || student.date_of_joining;
+    student.father_name = req.body.father_name || student.father_name;
+    student.age = req.body.age || student.age;
+    student.address = req.body.address || student.address;
+    student.gender = req.body.gender || student.gender;
+    student.email = req.body.email || student.email;
+    student.mother_name = req.body.mother_name || student.mother_name;
+    student.roll_number = req.body.roll_number || student.roll_number;
+    student.father_number = req.body.father_number || student.father_number;
+    student.mother_number = req.body.mother_number || student.mother_number;
+    student.admission_number = req.body.admission_number || student.admission_number;
+    student.entry_fee = req.body.entry_fee || student.entry_fee;
+    student.class = req.body.class || student.class;
+    student.phone_number = req.body.phone_number || student.phone_number;
+    student.photoUrl = req.body.photoUrl || student.photoUrl;
+    student.temp_address = req.body.temp_address || student.temp_address;
+    student.alternate_number = req.body.alternate_number || student.alternate_number;
+
+    // Update class_alias based on the selected class
+    const classAliasMapping = {
+      'class_a': 'beginner',
+      'class_b': 'Qaida',
+      'class_c': 'Amma Para',
+      'class_d': "Qur'an",
+    };
+    student.class_alias = classAliasMapping[student.class] || '';
+
+    // Save the updated student
+    const updatedStudent = await student.save();
+
+    return res.status(200).json({
+      message: 'Student updated successfully',
+      student: updatedStudent,
+    });
+  } catch (error) {
+    console.error('Error updating student:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+
 //   async function csvToDb(csvUrl) {
 //     const result = [];
 //     console.log("csv url is ",csvUrl)

@@ -9,6 +9,8 @@ const feeController= require('../controllers/fee.controller')
 // router.post('/add',)
 const { check, validationResult } = require("express-validator");
 const uploadImage = require('../middleware/upload-image');
+const { updateStudent } = require('../controllers/student.controller'); // Import the editStudent controller function
+
 
 
 const fs = require('fs')
@@ -98,5 +100,8 @@ router.post('/uploadcsv',upload.single('uploadcsv'),studentController.uploadStud
 router.get('/get_attendance/date', attendanceController.getStudentsAttendanceStatus);
 
 router.get('/get_students_attendance_reports',attendanceController.getStudentsAttendanceReport);
+
+
+router.put('/:id', updateStudent); // Use the HTTP PUT method for updating a student
 
 module.exports=router
