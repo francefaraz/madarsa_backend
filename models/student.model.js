@@ -45,6 +45,8 @@ studentsSchema.pre('save', function (next) {
   next();
 });
 
+// Ensure compound unique index for these fields
+
 studentsSchema.index({ first_name: 1, last_name: 1, father_name: 1, phone_number: 1 }, { unique: true }, function(err, result) {
   if (err) {
     console.log("Error creating index:", err);

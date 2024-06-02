@@ -6,10 +6,131 @@ const path = require('path')
 
 const Students= require('../models/student.model');
 
+
+
 const sydFunctions=require('../util/syd-functions');
+
+
+const PendingStudents = require('../models/studentRegister.model'); // Adjust the path as necessary
+
+exports.createPendingStudent = async (req, res, next) => {
+    try {
+        const errorMessage = sydFunctions.validators(req, res);
+        if (errorMessage) {
+            return res.status(422).json({ message: 'Validation error', error: errorMessage });
+        }
+        if (!req.file) {
+            return res.status(422).json({ message: 'Please add an image!' });
+        }
+
+        const protocol = req.secure ? 'https' : 'http';
+        const hostUrl = `${protocol}://${req.headers.host}/`;
+
+        const classAliasMapping = {
+            'class_a': 'beginner',
+            'class_b': 'Qaida',
+            'class_c': 'Amma Para',
+            'class_d': "Qur'an",
+        };
+
+        const pendingStudent = new PendingStudents({
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            photoUrl: hostUrl + req.file.path.replace("\\", "/"),
+            date_of_birth: new Date(req.body.dob),
+            date_of_joining: new Date(req.body.doj),
+            aadhar_number: req.body.aadhar_number,
+            age: req.body.age,
+            gender: req.body.gender,
+            email: req.body.email,
+            class: req.body.class,
+            class_alias: classAliasMapping[req.body.class],
+            father_name: req.body.father_name,
+            mother_name: req.body.mother_name,
+            admission_number: req.body.admission_number,
+            entry_fee: req.body.entry_fee,
+            temp_address: req.body.temp_address,
+            address: req.body.address,
+            phone_number: req.body.phone_number,
+            father_number: req.body.father_number,
+            mother_number: req.body.mother_number,
+            alternate_number: req.body.alternate_number
+        });
+
+        const result = await pendingStudent.save();
+
+        return res.status(201).json({
+            message: "Student registration is pending approval!",
+            student: result
+        });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: 'Student registration failed!', error: error.message });
+    }
+};
+
+
+
+exports.approveStudent = async (req, res, next) => {
+    try {
+        const pendingStudent = await PendingStudents.findById(req.params.id);
+
+        if (!pendingStudent) {
+            return res.status(404).json({ message: 'Pending student not found' });
+        }
+
+        const rollNumber = await generateRollNumber(pendingStudent.class);
+
+        const student = new Students({
+            first_name: pendingStudent.first_name,
+            last_name: pendingStudent.last_name,
+            photoUrl: pendingStudent.photoUrl,
+            date_of_birth: pendingStudent.date_of_birth,
+            date_of_joining: pendingStudent.date_of_joining,
+            aadhar_number: pendingStudent.aadhar_number,
+            age: pendingStudent.age,
+            gender: pendingStudent.gender,
+            email: pendingStudent.email,
+            class: pendingStudent.class,
+            class_alias: pendingStudent.class_alias,
+            father_name: pendingStudent.father_name,
+            mother_name: pendingStudent.mother_name,
+            roll_number: rollNumber,
+            admission_number: pendingStudent.admission_number,
+            entry_fee: pendingStudent.entry_fee,
+            temp_address: pendingStudent.temp_address,
+            address: pendingStudent.address,
+            phone_number: pendingStudent.phone_number,
+            father_number: pendingStudent.father_number,
+            mother_number: pendingStudent.mother_number,
+            alternate_number: pendingStudent.alternate_number
+        });
+
+        const result = await student.save();
+        await pendingStudent.remove();
+
+        return res.status(201).json({
+            message: "Student has been approved and added to the main database!",
+            student: result
+        });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: 'Student approval failed!', error: error.message });
+    }
+};
+
+
 exports.createStudent = async(request,res,next)=>{
-    console.log("hello in syd")
-    console.log(request.body.first_name)
+    console.log("hello in create student")
+    let rollNumber = request.body.roll_number;
+    console.log("roll number is ",rollNumber,"body is ",request.body.roll_number)
+    if (!rollNumber || rollNumber === "null") {
+      console.log("generating roll number automatic")
+      rollNumber = await generateRollNumber(request.body.class);
+      console.log("generated roll number is ",rollNumber)
+    }
+    console.log("roll number is ",rollNumber)
+
 
     try{
         
@@ -34,6 +155,8 @@ exports.createStudent = async(request,res,next)=>{
           'class_c': 'Amma Para',
           'class_d': "Qur'an",
         };
+
+
         const student=new Students({
             first_name: request.body.first_name,
             last_name: request.body.last_name,
@@ -48,7 +171,7 @@ exports.createStudent = async(request,res,next)=>{
             class_alias : classAliasMapping[request.body.class],
             father_name: request.body.father_name,
             mother_name: request.body.mother_name,
-            roll_number: request.body.roll_number,
+            roll_number: rollNumber,
             admission_number:request.body.admission_number,
             entry_fee:request.body.entry_fee,
             temp_address: request.body.temp_address,
@@ -76,6 +199,28 @@ exports.createStudent = async(request,res,next)=>{
     }
 };
 
+const generateRollNumber = async (studentClass) => {
+  const currentYear = new Date().getFullYear().toString().slice(-2);
+  const madarsaCode = '786';
+  const classCode = studentClass.toUpperCase().slice(-1);
+
+  const lastStudent = await Students.findOne({ class: studentClass }).sort({ roll_number: -1 }).select('roll_number')
+
+
+  if (!lastStudent || !lastStudent.roll_number) {
+      return `${madarsaCode}-${currentYear}-${classCode}-001`;
+  }
+ 
+  const lastRollNumber = lastStudent.roll_number;
+  const rollNumberParts = lastRollNumber.split('-');
+  const numericPart = parseInt(rollNumberParts[3], 10);
+  const newNumericPart = numericPart + 1;
+  const formattedNumericPart = String(newNumericPart).padStart(3, '0');
+
+  return `${madarsaCode}-${currentYear}-${classCode}-${formattedNumericPart}`;
+};
+
+
 
 exports.getAllStudents= async(req, res, next)=>{
     Students.find().sort({class:1,roll_number:1})
@@ -92,7 +237,7 @@ exports.getAllStudents= async(req, res, next)=>{
 exports.deleteStudentByEmail = async (req, res) => {
     console.log("hello")
     try {
-        console.log("FARAAA")
+        console.log("in student delete by email")
       const studentEmail = req.params.email;
         console.log(studentEmail);
       // Find the student by email and delete it
@@ -101,7 +246,7 @@ exports.deleteStudentByEmail = async (req, res) => {
       if (!deletedStudent) {
         return res.status(404).json({ message: 'Student not found' });
       }
-      console.log("DELETE HOGYA BE");
+      console.log("DELETED");
       res.status(200).json({ message: 'Student deleted successfully' });
     } catch (error) {
       console.error('Error deleting student:', error);
