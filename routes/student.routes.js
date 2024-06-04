@@ -101,8 +101,9 @@ router.get('/get_attendance/date', attendanceController.getStudentsAttendanceSta
 
 router.get('/get_students_attendance_reports',attendanceController.getStudentsAttendanceReport);
 
-router.post('/pending-students', studentController.createPendingStudent);
+router.post('/pending-students',uploadImage, studentController.createPendingStudent);
 router.post('/pending-students/approve/:id', studentController.approveStudent);
+router.get('/pending-students', studentController.getAllRegisteredStudent);
 
 router.put('/:id', updateStudent); // Use the HTTP PUT method for updating a student
 

@@ -13,7 +13,24 @@ const sydFunctions=require('../util/syd-functions');
 
 const PendingStudents = require('../models/studentRegister.model'); // Adjust the path as necessary
 
+exports.getAllRegisteredStudent = async (req,res,next) =>{
+  try {
+    const pendingStudents = await PendingStudents.find({ status: 'pending' });
+    res.status(200).json({
+        message: 'List of pending students fetched successfully',
+        students: pendingStudents
+    });
+} catch (error) {
+    console.error('Error fetching pending students:', error);
+    res.status(500).json({
+        message: 'Failed to fetch pending students',
+        error: error.message
+    });
+}
+}
+
 exports.createPendingStudent = async (req, res, next) => {
+  console.log("In pending student",req.body,"file is",req.file)
     try {
         const errorMessage = sydFunctions.validators(req, res);
         if (errorMessage) {
@@ -155,7 +172,6 @@ exports.createStudent = async(request,res,next)=>{
           'class_c': 'Amma Para',
           'class_d': "Qur'an",
         };
-
 
         const student=new Students({
             first_name: request.body.first_name,
